@@ -1,9 +1,38 @@
 from tkinter import *                 #добавляю библиотеку tkinter для создания графического окна
+from tkinter import messagebox as mb  #библиотека для всплывающих окон предупреждения
+from tkinter import ttk               #библиотека виджета выпадающих списков
+import requests                       #библиотека для HTTP-запросов к API
 
-#создание графического интерфейса - основного окна, титульное название, его размер
-root = Tk()
-root.title('Курс криптовалют')
-root.geometry('360x220')
+#функции отображения выбранной криптовалюты
+def update_base_label(event):
+    base_label.config(text=crypto_display.get(base_combobox.get(), '')) #показывает название и расшифровку криптовалюты
+
+
+def update_currency_label(event):
+    target_label.config(text=cash_display.get(target_combobox.get(), '')) #показывает название и расшифровку валюты
+
+
+#Основная функция обмена
+def exchange():
+    crypto = base_combobox.get()  #код криптовалюты, выбранный в списке криптовалют
+    cash = target_combobox.get()  #код валюты, выбранный в списке валют
+
+    if crypto and cash:  #если выбраны все поля происходит запрос к api
+        try:
+            url = f'https://api.coingecko.com/api/v3/simple/price?ids={crypto_api_ids[crypto]}&vs_currencies={cash_codes[cash]}'
+            response = requests.get(url, timeout=5)  # Отправляем запрос (таймаут 5 сек)
+            response.raise_for_status()  #проверка статуса на ошибку с сервера
+            data = response.json()  #формируем JSON-ответ в словарь
+
+            #получаем курсы
+            rate = data[crypto_api_ids[crypto]][cash_codes[cash]]
+
+            #демонстрируется курс обмена во всплывающем окне
+            mb.showinfo('Курс обмена', f'1 {crypto_display[crypto]} = {rate:.2f} {cash_display[cash]}')
+        except Exception as er:
+            mb.showerror('Ошибка', er)  #сообщение об ошике в окне
+    else:
+        mb.showwarning('Внимание', 'Выберите криптовалюту и валюту')  #если что-то не выбрано во выпадающих списках
 
 #создание словарей с их идентификаторами (id)
 crypto_api_ids = {
