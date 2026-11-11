@@ -15,26 +15,17 @@ def divide(x, y):
 def log(result):
     with open("calculations.txt", "a") as file:
         file.write(result + "\n")  # добавлен перевод строки для читаемости
-def show_history():
-    try:
-        with open("calculations.txt", "r") as file:
-            history = file.readlines()
 
 print("Выберите операцию: ")
 print("1. Сложение")
 print("2. Вычитание")
 print("3. Умножение")
 print("4. Деление")
-print("5. Просмотр истории вычислений")
 
-choice = input("Введите номер операции (1/2/3/4/5): ")
+choice = input("Введите номер операции (1/2/3/4): ")
 
 num1 = int(input("Введите первое число: "))
 num2 = int(input("Введите второе число: "))
-
-elif choice == '5':
-    show_history()
-    continue
 
 if choice == '1':
     r = f"Результат: {num1} + {num2} = {add(num1, num2)}"
